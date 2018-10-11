@@ -7,6 +7,8 @@ var fs=require("fs"),
     rimraf = require('rimraf'),
     plugins = require('gulp-load-plugins')();
 const path = require('path');
+const babel = require('gulp-babel');
+
 var outputDir='dist';
 var output=global.dataPath.root+'/'+outputDir;
 
@@ -51,7 +53,13 @@ gulp.task('minify_js', function () {
     return gulp.src([global.dataPath.root+'/**/*.js'],{
             base: global.dataPath.root 
         })
+        .pipe(babel({
+            "presets": ['@babel/env']
+        }))
         .pipe(plugins.uglify())
+        .on('error', function (err) {
+            plugins.util.log(plugins.util.colors.red('[Error]'), err.toString());
+        }) 
         .pipe(gulp.dest(output));
 });
 // 拷贝图片至相对应的目录
